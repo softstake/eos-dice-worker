@@ -6,27 +6,9 @@ const StateSynced = 2
 const StateCleared = 3
 
 
-async function updateBet(db: any, payload: any, blockinfo: any) {
-    console.log("BLOCKINFO: ", blockinfo)
-    console.log('payload:', payload)
-
-    const json = binToJSON(payload.account, payload.name, payload.data)
-    const obj = JSON.parse(json)
-
-    console.log("ROLL UNDER IS: ", obj.args.result.roll_under)
-
-    // TODO: critetias of find in more detail
-    await db.bets.update({ game_id: obj.args.result.game_id }, {
-        random_roll: obj.args.result.random_roll,
-        player_payout: obj.args.result.payout.split(" ")[0],
-        referer_payout: obj.args.result.ref_payout.split(" ")[0],
-        signature: obj.args.result.sig,
-        state: StateSynced
-    })
-
-}
-
 async function addBet(db: any, payload: any, blockinfo: any) {
+    console.log("AddBet was called")
+
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
     const bet = obj.args.bet
@@ -47,26 +29,32 @@ async function addBet(db: any, payload: any, blockinfo: any) {
 }
 
 async function updateResolve(db: any, payload: any, blockinfo: any) {
-    console.log("UPDATE RESOLVE CALLING")
+    console.log("UpdateResove was called")
 
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
-
-    //console.log("BLOCK NUMBER IS ", blockinfo.blockNumber)
-
-    //const bet = await db.bets.findOne({
-    //    bet_id: obj.args.bet_id,
-    //})
 
     // TODO: save block number
     await db.bets.update({ bet_id: obj.args.bet_id }, { state: StateResolved })
 }
 
+async function updateBet(db: any, payload: any, blockinfo: any) {
+    console.log("UpdateBet was called")
+
+    const json = binToJSON(payload.account, payload.name, payload.data)
+    const obj = JSON.parse(json)
+
+    // TODO: critetias of find in more detail
+    await db.bets.update({ game_id: obj.args.result.game_id }, {
+        random_roll: obj.args.result.random_roll,
+        player_payout: obj.args.result.payout.split(" ")[0],
+        referer_payout: obj.args.result.ref_payout.split(" ")[0],
+        signature: obj.args.result.sig,
+        state: StateSynced
+    })
+}
+
 const updaters = [
-    {
-        actionType: 'casinosevens::receipt',
-        apply: updateBet,
-    },
     {
         actionType: 'casinosevens::notify',
         apply: addBet,
@@ -74,6 +62,10 @@ const updaters = [
     {
         actionType: 'casinosevens::resolvebet',
         apply: updateResolve,
+    },
+    {
+        actionType: 'casinosevens::receipt',
+        apply: updateBet,
     },
 ]
 

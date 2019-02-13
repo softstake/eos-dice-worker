@@ -14,8 +14,7 @@ const rpc = new JsonRpc('http://jungle2.cryptolions.io:80', { fetch });
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
 async function resolveBet(payload: any, blockinfo: any) {
-    console.log("BLOCKINFO: ", blockinfo)
-    console.log("PAYLOAD: ", payload)
+    console.log("ResolveBet was called")
 
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
