@@ -1,3 +1,5 @@
+const ApiUrl = "http://jungle2.cryptolions.io:80"
+
 export function binToJSON(account: any, name: any, data: any) {
     let XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
     let req = new XMLHttpRequest()
@@ -8,7 +10,7 @@ export function binToJSON(account: any, name: any, data: any) {
         binargs: data
     })
 
-    req.open("POST", "http://jungle2.cryptolions.io:80/v1/chain/abi_bin_to_json", false)
+    req.open("POST", ApiUrl + "/v1/chain/abi_bin_to_json", false)
     req.setRequestHeader('Content-type', 'application/json; charset=utf-8')
     req.send(json)
 

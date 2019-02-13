@@ -3,8 +3,10 @@ export { }
 const { BaseActionWatcher } = require("demux")
 const { MassiveActionHandler } = require("demux-postgres")
 const { MongoActionReader } = require("demux-eos")
-
+const { Migration } = require("demux-postgres")
 const massive = require("massive")
+
+const SchemaName = "sevens"
 
 const updaters = require("./handlers/updaters")
 const effects = require("./handlers/effects")
@@ -14,10 +16,6 @@ const handlerVersions = {
     updaters,
     effects,
 }
-
-const SchemaName = "sevens"
-
-const { Migration } = require("demux-postgres")
 
 const migrations = [
     new Migration('createBetsTable', SchemaName, 'migrations/migration1.sql'),
@@ -35,17 +33,18 @@ const dbConfig = {
     password: 'docker',
 }
 
+
 async function start() {
     let db = await massive(dbConfig)
 
     // сompletely remove schema
-    /*try {
+    try {
         await db.query(
             "DROP SCHEMA $1:raw CASCADE;",
             [SchemaName]
         )
     }
-    catch (e) { }*/
+    catch (e) { }
 
     const actionReader = new MongoActionReader(
         "mongodb://mongo:123test@ds223605.mlab.com:23605/bets",

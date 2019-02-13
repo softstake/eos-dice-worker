@@ -7,11 +7,16 @@ const fetch = require('node-fetch')
 const { TextDecoder, TextEncoder } = require('text-encoding');
 const eosecc = require('eosjs-ecc')
 
+const ApiUrl = "http://jungle2.cryptolions.io:80"
+const ContractName = "casinosevens"
+const ActorName = "sevenshelper"
+
 const privateKeys = ["5KEt3nBsoRrZ1W2xuFCPdJUohFfCZZJM5Yd4LMRwunKyUq1q7KH"]
 const signatureProvider = new JsSignatureProvider(privateKeys);
 
-const rpc = new JsonRpc('http://jungle2.cryptolions.io:80', { fetch });
+const rpc = new JsonRpc(ApiUrl, { fetch });
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
+
 
 async function resolveBet(payload: any, blockinfo: any) {
     console.log("ResolveBet was called")
@@ -26,10 +31,10 @@ async function resolveBet(payload: any, blockinfo: any) {
 
     const result = await api.transact({
         actions: [{
-            account: 'casinosevens',
+            account: ContractName,
             name: 'resolvebet',
             authorization: [{
-                actor: 'sevenshelper',
+                actor: ActorName,
                 permission: 'active',
             }],
             data: {
