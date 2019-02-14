@@ -50,7 +50,6 @@ async function start() {
     let db = await massive(dbConfig)
 
     // сompletely remove schema
-    /*
     try {
         await db.query(
             "DROP SCHEMA $1:raw CASCADE;",
@@ -58,7 +57,6 @@ async function start() {
         )
     }
     catch (e) { }
-    */
 
     const actionReader = new MongoActionReader(
         mongoEndpoint,
