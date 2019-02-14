@@ -1,4 +1,9 @@
-const ApiUrl = "http://jungle2.cryptolions.io:80"
+const apiUrl = process.env.API_URL
+
+if (apiUrl == "") {
+    throw new Error("Some of required ENV vars are empty. The vars are: API_URL")
+}
+
 
 export function binToJSON(account: any, name: any, data: any) {
     let XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
@@ -10,7 +15,7 @@ export function binToJSON(account: any, name: any, data: any) {
         binargs: data
     })
 
-    req.open("POST", ApiUrl + "/v1/chain/abi_bin_to_json", false)
+    req.open("POST", apiUrl + "/v1/chain/abi_bin_to_json", false)
     req.setRequestHeader('Content-type', 'application/json; charset=utf-8')
     req.send(json)
 

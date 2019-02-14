@@ -6,7 +6,19 @@ const { MongoActionReader } = require("demux-eos")
 const { Migration } = require("demux-postgres")
 const massive = require("massive")
 
-const SchemaName = "sevens"
+const mongoEndpoint = process.env.MONGO_URI
+const mongoName = process.env.MONGO_NAME
+const pgHost = process.env.PG_HOST
+const pgPort = process.env.PG_PORT
+const pgName = process.env.PG_NAME
+const pgUser = process.env.PG_USER
+const pgPwd = process.env.PG_PWD
+
+if (mongoEndpoint == "" || mongoName == "" || pgHost == "" || pgPort == "" || pgName == "" || pgUser == "" || pgPwd == "") {
+    throw new Error("Some of required ENV vars are empty. The vars are: MONGO_URI, MONGO_NAME, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD")
+}
+
+const PgSchemaName = "sevens"
 
 const updaters = require("./handlers/updaters")
 const effects = require("./handlers/effects")
@@ -18,7 +30,7 @@ const handlerVersions = {
 }
 
 const migrations = [
-    new Migration('createBetsTable', SchemaName, 'migrations/migration1.sql'),
+    new Migration('createBetsTable', PgSchemaName, 'migrations/migration1.sql'),
 ]
 const migrationSequence = {
     migrations,
@@ -26,11 +38,11 @@ const migrationSequence = {
 }
 
 const dbConfig = {
-    host: 'localhost',
-    port: 5432,
-    database: 'postgres',
-    user: 'postgres',
-    password: 'docker',
+    host: pgHost,
+    port: pgPort,
+    database: pgName,
+    user: pgUser,
+    password: pgPwd,
 }
 
 
@@ -42,25 +54,25 @@ async function start() {
     try {
         await db.query(
             "DROP SCHEMA $1:raw CASCADE;",
-            [SchemaName]
+            [PgSchemaName]
         )
     }
     catch (e) { }
     */
 
     const actionReader = new MongoActionReader(
-        "mongodb://mongo:123test@ds223605.mlab.com:23605/bets",
+        mongoEndpoint,
         0, // start at block number
         false,
         600,
-        "bets"
+        mongoName
     )
     await actionReader.initialize()
 
     const actionHandler = new MassiveActionHandler(
         [handlerVersions],
         db,
-        SchemaName,
+        PgSchemaName,
         [migrationSequence]
     )
 

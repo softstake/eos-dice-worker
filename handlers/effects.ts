@@ -7,14 +7,20 @@ const fetch = require('node-fetch')
 const { TextDecoder, TextEncoder } = require('text-encoding');
 const eosecc = require('eosjs-ecc')
 
-const ApiUrl = "http://jungle2.cryptolions.io:80"
+const apiUrl = process.env.API_URL
+const privateKey = process.env.KEY
+
+if (privateKey == "" || apiUrl == "") {
+    throw new Error("Some of required ENV vars are empty. The vars are: API_URL, KEY")
+}
+
 const ContractName = "casinosevens"
 const ActorName = "sevenshelper"
 
-const privateKeys = ["5KEt3nBsoRrZ1W2xuFCPdJUohFfCZZJM5Yd4LMRwunKyUq1q7KH"]
+const privateKeys = [privateKey]
 const signatureProvider = new JsSignatureProvider(privateKeys);
 
-const rpc = new JsonRpc(ApiUrl, { fetch });
+const rpc = new JsonRpc(apiUrl, { fetch });
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
 

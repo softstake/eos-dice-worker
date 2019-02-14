@@ -44,7 +44,7 @@ async function updateBet(db: any, payload: any, blockinfo: any) {
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
 
-    // TODO: critetias of find in more detail
+    // TODO: criterias of find in more detail
     await db.bets.update({ game_id: obj.args.result.game_id }, {
         random_roll: obj.args.result.random_roll,
         player_payout: obj.args.result.payout.split(" ")[0],
