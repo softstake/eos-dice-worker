@@ -18,7 +18,7 @@ if (mongoEndpoint == "" || mongoName == "" || pgHost == "" || pgPort == "" || pg
     throw new Error("Some of required ENV vars are empty. The vars are: MONGO_URI, MONGO_NAME, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD")
 }
 
-const PgSchemaName = "sevens"
+const PgSchemaName = "public"
 
 const updaters = require("./handlers/updaters")
 const effects = require("./handlers/effects")
