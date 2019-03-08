@@ -6,17 +6,27 @@ const { MongoActionReader } = require("demux-eos")
 const { Migration } = require("demux-postgres")
 const massive = require("massive")
 
-const mongoEndpoint = process.env.MONGO_URI
+
+const mongoHost = process.env.MONGO_HOST
+const mongoPort = process.env.MONGO_PORT
 const mongoName = process.env.MONGO_NAME
+const mongoUser = process.env.MONGO_USER
+const mongoPwd = process.env.MONGO_PWD
+
 const pgHost = process.env.PG_HOST
 const pgPort = process.env.PG_PORT
 const pgName = process.env.PG_NAME
 const pgUser = process.env.PG_USER
 const pgPwd = process.env.PG_PWD
 
-if (mongoEndpoint == "" || mongoName == "" || pgHost == "" || pgPort == "" || pgName == "" || pgUser == "" || pgPwd == "") {
-    throw new Error("Some of required ENV vars are empty. The vars are: MONGO_URI, MONGO_NAME, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD")
+const apiUrl = process.env.EOS_API_URL
+const privateKey = process.env.KEY
+
+if (mongoHost == "" || mongoPort == "" || mongoName == "" || mongoUser == "" || mongoPwd == "" || pgHost == "" || pgPort == "" || pgName == "" || pgUser == "" || pgPwd == "" || apiUrl == "" || privateKey == "") {
+    throw new Error("Some of required ENV vars are empty. The vars are: MONGO_HOST, MONGO_PORT, MONGO_NAME, MONGO_NAME, MONGO_USER, MONGO_PWD, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD, EOS_API_URL, KEY")
 }
+
+const mongoEndpoint = 'mongodb://'+mongoUser+':'+mongoPwd+'@'+mongoHost+':'+mongoPort+'/'+mongoName
 
 const PgSchemaName = "public"
 

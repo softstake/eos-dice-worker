@@ -1,8 +1,8 @@
 const apiUrl = process.env.EOS_API_URL
 
-if (apiUrl == "") {
-    throw new Error("Some of required ENV vars are empty. The vars are: EOS_API_URL")
-}
+// if (apiUrl == "") {
+//     throw new Error("Some of required ENV vars are empty. The vars are: EOS_API_URL")
+// }
 
 export function binToJSON(account: any, name: any, data: any) {
     let XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
