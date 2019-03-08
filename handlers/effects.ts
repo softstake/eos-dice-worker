@@ -7,11 +7,11 @@ const fetch = require('node-fetch')
 const { TextDecoder, TextEncoder } = require('text-encoding');
 const eosecc = require('eosjs-ecc')
 
-const apiUrl = process.env.API_URL
+const apiUrl = process.env.EOS_API_URL
 const privateKey = process.env.KEY
 
 if (privateKey == "" || apiUrl == "") {
-    throw new Error("Some of required ENV vars are empty. The vars are: API_URL, KEY")
+    throw new Error("Some of required ENV vars are empty. The vars are: EOS_API_URL, KEY")
 }
 
 const ContractName = "casinosevens"

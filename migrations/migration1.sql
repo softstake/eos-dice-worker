@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS ${schema~}.bets (
     updated_at timestamp with time zone DEFAULT (now())::timestamp without time zone
 );
 
-CREATE SEQUENCE ${schema~}.bets_id_seq
+CREATE SEQUENCE IF NOT EXISTS ${schema~}.bets_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
