@@ -22,7 +22,7 @@ const pgPwd = process.env.PG_PWD
 const apiUrl = process.env.EOS_API_URL
 const privateKey = process.env.KEY
 
-if (mongoHost == "" || mongoPort == "" || mongoName == "" || mongoUser == "" || mongoPwd == "" || pgHost == "" || pgPort == "" || pgName == "" || pgUser == "" || pgPwd == "" || apiUrl == "" || privateKey == "") {
+if (mongoHost == undefined || mongoPort == undefined || mongoName == undefined || mongoUser == undefined || mongoPwd == undefined || pgHost == undefined || pgPort == undefined || pgName == undefined || pgUser == undefined || pgPwd == undefined || apiUrl == undefined || privateKey == undefined) {
     throw new Error("Some of required ENV vars are empty. The vars are: MONGO_HOST, MONGO_PORT, MONGO_NAME, MONGO_NAME, MONGO_USER, MONGO_PWD, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD, EOS_API_URL, KEY")
 }
 
