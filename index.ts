@@ -70,7 +70,7 @@ async function start() {
 
     const actionReader = new MongoActionReader(
         mongoEndpoint,
-        0, // start at block number
+        17370288, // start at block number
         false,
         600,
         mongoName
