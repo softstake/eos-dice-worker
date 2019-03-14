@@ -26,7 +26,7 @@ if (mongoHost == undefined || mongoPort == undefined || mongoName == undefined |
     throw new Error("Some of required ENV vars are empty. The vars are: MONGO_HOST, MONGO_PORT, MONGO_NAME, MONGO_NAME, MONGO_USER, MONGO_PWD, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD, EOS_API_URL, KEY")
 }
 
-const mongoEndpoint = 'mongodb://'+mongoUser+':'+mongoPwd+'@'+mongoHost+':'+mongoPort+'/'+mongoName
+const mongoEndpoint = 'mongodb://' + mongoUser + ':' + mongoPwd + '@' + mongoHost + ':' + mongoPort + '/' + mongoName
 
 const PgSchemaName = "public"
 
@@ -70,7 +70,7 @@ async function start() {
 
     const actionReader = new MongoActionReader(
         mongoEndpoint,
-        17370288, // start at block number
+        18390500, // start at block number
         false,
         600,
         mongoName
