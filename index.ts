@@ -43,8 +43,8 @@ const migrations = [
     new Migration('createBetsTable', PgSchemaName, 'migrations/migration1.sql'),
 ]
 const migrationSequence = {
-    migrations,
-    sequenceName: 'init',
+    migrations: migrations,
+    sequenceName: 'init'
 }
 
 const dbConfig = {
@@ -59,22 +59,21 @@ const dbConfig = {
 async function start() {
     let db = await massive(dbConfig)
 
-    // сompletely remove schema
-    // try {
-    //     await db.query(
-    //         "DROP SCHEMA $1:raw CASCADE;",
-    //         [PgSchemaName]
-    //     )
-    // }
-    // catch (e) { }
+    //сompletely remove schema
+    //try {
+    //    await db.query(
+    //        "DROP SCHEMA $1:raw CASCADE;",
+    //        [PgSchemaName]
+    //    )
+    //}
+    //catch (e) { }
 
-    const actionReader = new MongoActionReader(
-        mongoEndpoint,
-        18476090, // start at block number
-        false,
-        600,
-        mongoName
-    )
+    const actionReader = new MongoActionReader({
+        mongoEndpoint: mongoEndpoint,
+        startAtBlock: 18701280, // start at block number, must be no less than the value in the _index_state
+        onlyIrreversible: false,
+        dbName: mongoName
+    })
     await actionReader.initialize()
 
     const actionHandler = new MassiveActionHandler(
@@ -83,8 +82,6 @@ async function start() {
         PgSchemaName,
         [migrationSequence]
     )
-
-    await actionHandler.setupDatabase()
 
     const actionWatcher = new BaseActionWatcher(
         actionReader,

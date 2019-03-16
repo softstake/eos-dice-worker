@@ -10,12 +10,12 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^10.12.30",
-    "demux-eos": "^3.1.0",
-    "demux-postgres": "^3.0.0",
+    "demux-eos": "^4.0.1",
+    "demux-postgres": "^4.0.1",
     "eosjs": "^20.0.0-beta3",
     "eosjs-ecc": "^4.0.4",
     "fs": "0.0.1-security",
-    "massive": "^5.2.0",
+    "massive": "^5.7.7",
     "node-fetch": "^2.3.0",
     "text-encoding": "^0.7.0",
     "xmlhttprequest": "^1.8.0"
