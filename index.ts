@@ -70,7 +70,7 @@ async function start() {
 
     const actionReader = new MongoActionReader({
         mongoEndpoint: mongoEndpoint,
-        startAtBlock: 18701280, // start at block number, must be no less than the value in the _index_state
+        startAtBlock: 17370168, // start at block number, must be no less than the value in the _index_state
         onlyIrreversible: false,
         dbName: mongoName
     })
