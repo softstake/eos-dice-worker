@@ -53,6 +53,7 @@ const dbConfig = {
     database: pgName,
     user: pgUser,
     password: pgPwd,
+    ssl: true,
 }
 
 
