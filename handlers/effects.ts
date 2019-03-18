@@ -1,6 +1,6 @@
 export { }
 
-const { binToJSON } = require("../utils")
+const { binToJSON } = require('../utils')
 const { Api, JsonRpc } = require('eosjs')
 const JsSignatureProvider = require('eosjs/dist/eosjs-jssig').default
 const fetch = require('node-fetch')
@@ -10,12 +10,8 @@ const eosecc = require('eosjs-ecc')
 const apiUrl = process.env.EOS_API_URL
 const privateKey = process.env.KEY
 
-// if (privateKey == "" || apiUrl == "") {
-//     throw new Error("Some of required ENV vars are empty. The vars are: EOS_API_URL, KEY")
-// }
-
-const ContractName = "casinosevens"
-const ActorName = "sevenshelper"
+const ContractName = 'casinosevens'
+const ActorName = 'sevenshelper'
 
 const privateKeys = [privateKey]
 const signatureProvider = new JsSignatureProvider(privateKeys);
@@ -23,9 +19,13 @@ const signatureProvider = new JsSignatureProvider(privateKeys);
 const rpc = new JsonRpc(apiUrl, { fetch });
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
+const logger = require('pino')({'name': 'effects-logger'})
+
+
 
 async function resolveBet(payload: any, blockinfo: any) {
-    console.log("ResolveBet was called")
+
+    logger.info("resolveBet call...")
 
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
@@ -34,6 +34,8 @@ async function resolveBet(payload: any, blockinfo: any) {
     const house_seed = obj.args.bet.house_seed_hash
 
     const signature = eosecc.signHash(house_seed, privateKeys[0])
+
+    logger.info("... betID is: %d", betID)
 
     const result = await api.transact({
         actions: [{
@@ -52,7 +54,7 @@ async function resolveBet(payload: any, blockinfo: any) {
             blocksBehind: 3,
             expireSeconds: 3600,
         })
-    console.log(result)
+    logger.info(result)
 }
 
 const effects = [

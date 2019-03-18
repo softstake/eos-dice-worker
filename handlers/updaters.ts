@@ -1,4 +1,6 @@
-const { binToJSON } = require("../utils")
+const { binToJSON } = require('../utils')
+
+const logger = require('pino')({'name': 'updaters-logger'})
 
 const StateNew = 0
 const StateResolved = 1
@@ -7,11 +9,14 @@ const StateCleared = 3
 
 
 async function addBet(db: any, payload: any, blockinfo: any) {
-    console.log("AddBet was called")
+
+    logger.info('addBet call...')
 
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
     const bet = obj.args.bet
+
+    logger.info('... betID is: %d, gameID is: %d', bet.id, bet.game_id)
 
     // TODO: save block number
     await db.bets.insert({
@@ -29,21 +34,23 @@ async function addBet(db: any, payload: any, blockinfo: any) {
 }
 
 async function updateResolve(db: any, payload: any, blockinfo: any) {
-    console.log("UpdateResove was called")
+    logger.info('updateResolve call...')
 
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
 
     // TODO: save block number
+    logger.info('... betID is: %d', obj.args.bet_id)
     await db.bets.update({ bet_id: obj.args.bet_id }, { state: StateResolved })
 }
 
 async function updateBet(db: any, payload: any, blockinfo: any) {
-    console.log("UpdateBet was called")
+    logger.info('updateBet call...')
 
     const json = binToJSON(payload.account, payload.name, payload.data)
     const obj = JSON.parse(json)
 
+    logger.info('... gameID is: %d', obj.args.result.game_id)
     // TODO: criterias of find in more detail
     await db.bets.update({ game_id: obj.args.result.game_id }, {
         random_roll: obj.args.result.random_roll,
