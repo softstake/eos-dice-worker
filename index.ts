@@ -5,6 +5,7 @@ const { MassiveActionHandler } = require('demux-postgres')
 const { MongoActionReader } = require('demux-eos')
 const { Migration } = require('demux-postgres')
 const massive = require('massive')
+const logger = require('pino')({'name': 'main-logger'})
 
 
 const mongoHost = process.env.MONGO_HOST
