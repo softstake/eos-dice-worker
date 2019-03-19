@@ -21,3 +21,7 @@ export function binToJSON(account: any, name: any, data: any) {
 
     return req.responseText
 }
+
+export function isString(value: any) {
+    return typeof value === 'string' || value instanceof String;
+}
