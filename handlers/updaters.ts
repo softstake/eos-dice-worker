@@ -1,4 +1,4 @@
-const { binToJSON, isString } = require('../utils')
+const { binToJSON } = require('../utils')
 
 const logger = require('pino')({'name': 'updaters-logger'})
 
@@ -12,11 +12,9 @@ async function addBet(db: any, payload: any, blockinfo: any) {
 
     logger.info('addBet call...')
 
-    // const json = binToJSON(payload.account, payload.name, payload.data)
-    // const obj = JSON.parse(json)
-    // const bet = obj.args.bet
-
-    const bet = payload.data
+    const json = binToJSON(payload.account, payload.name, payload.data)
+    const obj = JSON.parse(json)
+    const bet = obj.args.bet
 
     logger.info('... betID is: %d, gameID is: %d', bet.id, bet.game_id)
 
@@ -38,10 +36,8 @@ async function addBet(db: any, payload: any, blockinfo: any) {
 async function updateResolve(db: any, payload: any, blockinfo: any) {
     logger.info('updateResolve call...')
 
-    // const json = binToJSON(payload.account, payload.name, payload.data)
-    // const obj = JSON.parse(json)
-
-    const obj = payload.data
+    const json = binToJSON(payload.account, payload.name, payload.data)
+    const obj = JSON.parse(json)
 
     // TODO: save block number
     logger.info('... betID is: %d', obj.args.bet_id)
@@ -51,10 +47,8 @@ async function updateResolve(db: any, payload: any, blockinfo: any) {
 async function updateBet(db: any, payload: any, blockinfo: any) {
     logger.info('updateBet call...')
 
-    // const json = binToJSON(payload.account, payload.name, payload.data)
-    // const obj = JSON.parse(json)
-
-    const obj = payload.data
+    const json = binToJSON(payload.account, payload.name, payload.data)
+    const obj = JSON.parse(json)
 
     logger.info('... gameID is: %d', obj.args.result.game_id)
     // TODO: criterias of find in more detail
