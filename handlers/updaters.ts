@@ -1,4 +1,6 @@
-const { binToJSON } = require("../utils")
+const { binToJSON, isString } = require('../utils')
+
+const logger = require('pino')({ 'name': 'updaters-logger' })
 
 const StateNew = 0
 const StateResolved = 1
@@ -7,11 +9,19 @@ const StateCleared = 3
 
 
 async function addBet(db: any, payload: any, blockinfo: any) {
-    console.log("AddBet was called")
 
-    const json = binToJSON(payload.account, payload.name, payload.data)
-    const obj = JSON.parse(json)
-    const bet = obj.args.bet
+    logger.info('addBet call...')
+
+    let bet
+    if (isString(payload.data)) {
+        const json = binToJSON(payload.account, payload.name, payload.data)
+        const obj = JSON.parse(json)
+        bet = obj.args.bet
+    } else {
+        bet = payload.data.bet
+    }
+
+    logger.info('... betID is: %d, gameID is: %d', bet.id, bet.game_id)
 
     // TODO: save block number
     await db.bets.insert({
@@ -29,27 +39,37 @@ async function addBet(db: any, payload: any, blockinfo: any) {
 }
 
 async function updateResolve(db: any, payload: any, blockinfo: any) {
-    console.log("UpdateResove was called")
 
-    const json = binToJSON(payload.account, payload.name, payload.data)
-    const obj = JSON.parse(json)
+    logger.info('updateResolve call...')
+
+    let obj = payload.data
+    if (isString(payload.data)) {
+        const json = binToJSON(payload.account, payload.name, payload.data)
+        obj = JSON.parse(json)
+    }
 
     // TODO: save block number
-    await db.bets.update({ bet_id: obj.args.bet_id }, { state: StateResolved })
+    logger.info('... betID is: %d', obj.bet_id)
+    await db.bets.update({ bet_id: obj.bet_id }, { state: StateResolved })
 }
 
 async function updateBet(db: any, payload: any, blockinfo: any) {
-    console.log("UpdateBet was called")
 
-    const json = binToJSON(payload.account, payload.name, payload.data)
-    const obj = JSON.parse(json)
+    logger.info('updateBet call...')
 
+    let obj = payload.data
+    if (isString(payload.data)) {
+        const json = binToJSON(payload.account, payload.name, payload.data)
+        obj = JSON.parse(json)
+    }
+
+    logger.info('... gameID is: %d', obj.result.game_id)
     // TODO: criterias of find in more detail
-    await db.bets.update({ game_id: obj.args.result.game_id }, {
-        random_roll: obj.args.result.random_roll,
-        player_payout: obj.args.result.payout.split(" ")[0],
-        referer_payout: obj.args.result.ref_payout.split(" ")[0],
-        signature: obj.args.result.sig,
+    await db.bets.update({ game_id: obj.result.game_id }, {
+        random_roll: obj.result.random_roll,
+        player_payout: obj.result.payout.split(" ")[0],
+        referer_payout: obj.result.ref_payout.split(" ")[0],
+        signature: obj.result.sig,
         state: StateSynced
     })
 }

@@ -1,10 +1,11 @@
 export { }
 
-const { BaseActionWatcher } = require("demux")
-const { MassiveActionHandler } = require("demux-postgres")
-const { MongoActionReader } = require("demux-eos")
-const { Migration } = require("demux-postgres")
-const massive = require("massive")
+const { BaseActionWatcher } = require('demux')
+const { MassiveActionHandler } = require('demux-postgres')
+const { MongoActionReader } = require('demux-eos')
+const { Migration } = require('demux-postgres')
+const massive = require('massive')
+const logger = require('pino')({ 'name': 'main-logger' })
 
 
 const mongoHost = process.env.MONGO_HOST
@@ -23,18 +24,18 @@ const apiUrl = process.env.EOS_API_URL
 const privateKey = process.env.KEY
 
 if (mongoHost == undefined || mongoPort == undefined || mongoName == undefined || mongoUser == undefined || mongoPwd == undefined || pgHost == undefined || pgPort == undefined || pgName == undefined || pgUser == undefined || pgPwd == undefined || apiUrl == undefined || privateKey == undefined) {
-    throw new Error("Some of required ENV vars are empty. The vars are: MONGO_HOST, MONGO_PORT, MONGO_NAME, MONGO_NAME, MONGO_USER, MONGO_PWD, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD, EOS_API_URL, KEY")
+    throw new Error('Some of required ENV vars are empty. The vars are: MONGO_HOST, MONGO_PORT, MONGO_NAME, MONGO_NAME, MONGO_USER, MONGO_PWD, PG_HOST, PG_PORT, PG_NAME, PG_USER, PG_PWD, EOS_API_URL, KEY')
 }
 
 const mongoEndpoint = 'mongodb://' + mongoUser + ':' + mongoPwd + '@' + mongoHost + ':' + mongoPort + '/' + mongoName
 
-const PgSchemaName = "public"
+const PgSchemaName = 'public'
 
-const updaters = require("./handlers/updaters")
-const effects = require("./handlers/effects")
+const updaters = require('./handlers/updaters')
+const effects = require('./handlers/effects')
 
 const handlerVersions = {
-    versionName: "v1",
+    versionName: 'v1',
     updaters,
     effects,
 }
@@ -53,6 +54,7 @@ const dbConfig = {
     database: pgName,
     user: pgUser,
     password: pgPwd,
+    ssl: true,
 }
 
 
@@ -60,21 +62,25 @@ async function start() {
     let db = await massive(dbConfig)
 
     //сompletely remove schema
-    try {
-        await db.query(
-            "DROP SCHEMA $1:raw CASCADE;",
-            [PgSchemaName]
-        )
-    }
-    catch (e) { }
+    //try {
+    //    await db.query(
+    //        "DROP SCHEMA $1:raw CASCADE;",
+    //        [PgSchemaName]
+    //    )
+    //}
+    //catch (e) { }
+
+    logger.info('Init MongoActionReader...')
 
     const actionReader = new MongoActionReader({
         mongoEndpoint: mongoEndpoint,
-        startAtBlock: 19050700, // start at block number, must be no less than the value in the _index_state
+        startAtBlock: 19369100, // start at block number, must be no less than the value in the _index_state
         onlyIrreversible: false,
         dbName: mongoName
     })
     await actionReader.initialize()
+
+    logger.info('Init MassiceActionHandler...')
 
     const actionHandler = new MassiveActionHandler(
         [handlerVersions],
@@ -83,6 +89,7 @@ async function start() {
         [migrationSequence]
     )
 
+    logger.info('Init BaseActionWatcher, start watching...')
     const actionWatcher = new BaseActionWatcher(
         actionReader,
         actionHandler,
