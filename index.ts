@@ -60,17 +60,17 @@ async function start() {
     let db = await massive(dbConfig)
 
     //сompletely remove schema
-    //try {
-    //    await db.query(
-    //        "DROP SCHEMA $1:raw CASCADE;",
-    //        [PgSchemaName]
-    //    )
-    //}
-    //catch (e) { }
+    try {
+        await db.query(
+            "DROP SCHEMA $1:raw CASCADE;",
+            [PgSchemaName]
+        )
+    }
+    catch (e) { }
 
     const actionReader = new MongoActionReader({
         mongoEndpoint: mongoEndpoint,
-        startAtBlock: 18701280, // start at block number, must be no less than the value in the _index_state
+        startAtBlock: 19050700, // start at block number, must be no less than the value in the _index_state
         onlyIrreversible: false,
         dbName: mongoName
     })
